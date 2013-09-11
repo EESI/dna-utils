@@ -32,11 +32,11 @@ int main(int argc, char **argv) {
   while ((read = getline(&line, &len, fh)) != -1) {
     if(line[0] != '>')   {
 
+      unsigned int i = 0;
       unsigned long long *counts = malloc((width+ 1) * sizeof(unsigned long long));
       if(counts == NULL) 
         exit(EXIT_FAILURE);
 
-      unsigned int i = 0;
       for(i = 0; i < strlen(line) - kmer; i++) {
         counts[convert_kmer_to_index(&line[i], kmer, width)]++;
       }

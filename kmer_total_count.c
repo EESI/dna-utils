@@ -13,9 +13,9 @@ int main(int argc, char **argv) {
   char *line = NULL;
   size_t len = 0;
   ssize_t read;
-  unsigned int i = 0;
   unsigned int kmer = 0;
-  unsigned int width = 0;
+  unsigned long i = 0;
+  unsigned long width = 0;
   unsigned long long *counts;
 
   if(argc != 3) {
