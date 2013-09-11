@@ -1,9 +1,10 @@
 // Copyright 2013 Calvin Morrison
-#include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "kmer_utils.h"
 
