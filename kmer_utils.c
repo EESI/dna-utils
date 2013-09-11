@@ -16,40 +16,34 @@
 //  long kmer - how long of a index value you want to return
 //  long error_pos - what index to return for a non ACGT character
 //
-long convert_kmer_to_index(char *str, long kmer, long error_pos) {
+inline long convert_kmer_to_index(char *str, unsigned long kmer, long error_pos) {
 
   char **ptr = NULL;
   char vals[kmer];
-  long i = 0;
-  long ret = 0;
+  unsigned long i = 0;
 
   for(i = 0; i < kmer; i++) {
-    int val = 0;
     switch(str[i]) {
       case 'a':
       case 'A':
-        val = 48;
+        vals[i] = '0';
         break;
       case 'c':
       case 'C':
-        val = 49;
+        vals[i] = '1';
         break;
       case 'g':
       case 'G':
-        val = 50;
+        vals[i] = '2';
         break;
       case 't':
       case 'T':
-        val = 51;
+        vals[i] = '3';
         break;
       default:
         return error_pos; 
     }
-
-
-    vals[i] = val; 
   }
 
-  ret = strtol(vals, ptr, 4);
-  return ret;
+  return strtol(vals, ptr, 4);
 }
