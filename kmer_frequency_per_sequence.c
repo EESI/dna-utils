@@ -14,9 +14,10 @@ int main(int argc, char **argv) {
   long kmer = 6;
   size_t len = 0;
   ssize_t read;
+  unsigned long width = 0;
 
   if(argc != 3) {
-    printf("Please supply a filename, and only a filename\n");
+    printf("Please supply a filename and a kmer\n");
     exit(EXIT_FAILURE);
   }
 
@@ -26,8 +27,8 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  width = (int)pow(4, kmer);
 
-  int width = (int)pow(4, kmer);
   while ((read = getline(&line, &len, fh)) != -1) {
     if(line[0] != '>')   {
 
