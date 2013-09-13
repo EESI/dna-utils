@@ -41,11 +41,11 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
 
   while ((read = getline(&line, &len, fh)) != -1) {
-    if(line[0] != '>')   {
-      for(i = 0; i < strlen(line) - kmer; i++) {
+    if(line[0] != '>') {
+      for(i = 0; i < read - kmer; i++) {
         counts[convert_kmer_to_index(&line[i],kmer, width)]++;
       }
-    }
+    } 
   }
 
   for(i = 0; i < width; i++)

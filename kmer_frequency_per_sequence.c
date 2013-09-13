@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
       if(counts == NULL) 
         exit(EXIT_FAILURE);
 
-      for(i = 0; i < strlen(line) - kmer; i++) {
+      for(i = 0; i < read - kmer; i++) {
         counts[convert_kmer_to_index(&line[i], kmer, width)]++;
       }
 
