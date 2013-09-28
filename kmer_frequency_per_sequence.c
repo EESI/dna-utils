@@ -37,8 +37,10 @@ int main(int argc, char **argv) {
       if(counts == NULL) 
         exit(EXIT_FAILURE);
 
+      convert_kmer_to_num(line, read);
+
       for(i = 0; i < read - kmer; i++) {
-        counts[convert_kmer_to_index(&line[i], kmer, width)]++;
+        counts[num_to_index(&line[i],kmer, width)]++;
       }
 
       unsigned long total = 0;
