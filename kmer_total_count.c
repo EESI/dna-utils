@@ -13,10 +13,8 @@ int main(int argc, char **argv) {
   char *line = NULL;
   size_t len = 0;
   ssize_t read;
-  long i = 0;
+  unsigned long i = 0;
 
-  unsigned int kmer = 0;
-  unsigned long width = 0;
   unsigned long long *counts;
 
   if(argc != 3) {
@@ -31,10 +29,10 @@ int main(int argc, char **argv) {
   }
 
   // second argument is the kmer
-  kmer = atoi(argv[2]);
+  const unsigned int kmer = atoi(argv[2]);
 
   // width is 4^kmer 
-  width = (int)pow(4, kmer);
+  const unsigned long width = (int)pow(4, kmer);
 
   // malloc our counts matrix
   counts = malloc((width+ 1) * sizeof(unsigned long long));
