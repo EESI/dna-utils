@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   char *line = NULL;
   size_t len = 0;
   ssize_t read;
-  unsigned long i = 0;
+  long i = 0;
 
   unsigned long long *counts;
 
@@ -40,16 +40,16 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
 
   while ((read = getline(&line, &len, fh)) != -1) {
-    if(line[0] != '>') {
+    if(line[0] != '>' && read > kmer) {
       convert_kmer_to_num(line, read);
 
-      for(i = 0; i < read - kmer; i++) {
+      for(i = 0; i < (read - kmer); i++) {
         counts[num_to_index(&line[i],kmer, width)]++;
       }
     } 
   }
 
-  for(i = 0; i < width; i++)
+  for(i = 0; i < (unsigned)width; i++)
     printf("%llu\n", counts[i]);
 
 
