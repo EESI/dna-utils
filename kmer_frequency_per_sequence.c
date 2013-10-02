@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
   width = (int)pow(4, kmer);
 
   while ((read = getline(&line, &len, fh)) != -1) {
-    if(line[0] != '>')   {
+    if(line[0] != '>' && read > kmer) {
 
       unsigned int i = 0;
       unsigned long long *counts = malloc((width+ 1) * sizeof(unsigned long long));
