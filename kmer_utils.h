@@ -1,2 +1,2 @@
-long convert_kmer_to_index(char *str, long kmer, long error_pos);
-long num_to_index(const char *str, int kmer, long error_pos);
+void convert_kmer_to_num(char *str, const unsigned long length);
+long num_to_index(const char *str, const int kmer, const long error_pos);
