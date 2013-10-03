@@ -1,7 +1,9 @@
 // Copyright 2013 Calvin Morrison
+#include <errno.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "kmer_utils.h"
 
@@ -23,7 +25,7 @@ int main(int argc, char **argv) {
 
   FILE *fh = fopen(argv[1], "r");
   if(fh == NULL) {
-    fprintf(stderr, "Couldn't open: %s\n", argv[1]);
+    fprintf(stderr, "Error opening %s - %s\n", argv[1], strerror(errno));
     exit(EXIT_FAILURE);
   }
 
