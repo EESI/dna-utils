@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  FILE *fh = fopen(argv[1], "r" );
+  FILE *fh = fopen(argv[1], "r");
   if(fh == NULL) {
     fprintf(stderr, "Couldn't open: %s\n", argv[1]);
     exit(EXIT_FAILURE);
