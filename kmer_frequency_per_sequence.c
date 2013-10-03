@@ -1,12 +1,11 @@
 // Copyright 2013 Calvin Morrison
 #include <math.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 
 #include "kmer_utils.h"
+
+long position = 0;
 
 int main(int argc, char **argv) {
 

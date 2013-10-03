@@ -1,12 +1,11 @@
 // Copyright 2013 Calvin Morrison
 #include <math.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 
 #include "kmer_utils.h"
+
+long position = 0;
 
 int main(int argc, char **argv) {
 
@@ -43,8 +42,8 @@ int main(int argc, char **argv) {
     if(line[0] != '>' && read > kmer) {
       convert_kmer_to_num(line, read);
 
-      for(i = 0; i < (read - kmer); i++) {
-        counts[num_to_index(&line[i],kmer, width)]++;
+      for(position = 0; position < (read - kmer); position++) {
+        counts[num_to_index(&line[position],kmer, width)]++;
       }
     } 
   }

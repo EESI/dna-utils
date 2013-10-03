@@ -1,6 +1,8 @@
+#include "kmer_total_count.h"
+
 // convert a string of k-mer size base-4 values  into a
 // base-10 index
-long num_to_index(const char *str, const int kmer, const long error_pos) {
+unsigned long num_to_index(const char *str, const int kmer, const long error_pos) {
 
   int i = 0;
   unsigned long out = 0;
@@ -8,8 +10,13 @@ long num_to_index(const char *str, const int kmer, const long error_pos) {
 
   for(i = kmer - 1; i >= 0; i--){
 
-    if(str[i] >> 2)
-      return error_pos;
+		if(str[i] >> 2) { 
+			#ifndef SHARED
+			position += i;
+			#endif
+			return error_pos;
+		}
+
 
     out += str[i] * multiply;
     multiply = multiply << 2;
