@@ -1,16 +1,19 @@
-dna-utils
-=========
-
-general utilities for manipulating sequences and fasta files - high performance kmer counting
+# dna-utils 
 
 
-Tools included
-==============
+This repository contains general utilities for processing sequences in fasta files.
 
-kmer_total_count - this program will count each kmer, and print to standard out.
 
-arguemnts: fasta_file kmer_size
+### Tools included ###
 
-example: kmer_total_count SuperManSequences.fasta 8
+
+kmer_total_count - this program will count each kmer in a fasta file, and print to standard out.
+
+#### Usage
+
+    kmer_total_count filename kmer_size
+    
+    # Example
+    calvin@barnabas:~/dna-utils$ ./kmer_total_count SuperManSequences.fasta 8 
 
 the order of the array corresponds to AAAA, AAAC, AAAG, AAAT and so on
