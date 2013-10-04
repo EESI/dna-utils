@@ -2,7 +2,7 @@
 
 // convert a string of k-mer size base-4 values  into a
 // base-10 index
-unsigned long num_to_index(const char *str, const int kmer, const long error_pos) {
+inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos) {
 
   int i = 0;
   unsigned long out = 0;
@@ -17,7 +17,6 @@ unsigned long num_to_index(const char *str, const int kmer, const long error_pos
 			return error_pos;
 		}
 
-
     out += str[i] * multiply;
     multiply = multiply << 2;
   }
@@ -25,9 +24,6 @@ unsigned long num_to_index(const char *str, const int kmer, const long error_pos
   return out;
 }
 
-// replaces values in a char array of ACGT's and others with
-// values that correspond to their base 4 value to be used in
-// num_to_index.
 void convert_kmer_to_num(char *str, const unsigned long length) {
 
   unsigned long i = 0;
@@ -56,3 +52,4 @@ void convert_kmer_to_num(char *str, const unsigned long length) {
   }
 
 }
+

@@ -1,1 +1,1 @@
-extern long position;
+extern unsigned long position;
