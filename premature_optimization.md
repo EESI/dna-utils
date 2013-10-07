@@ -117,8 +117,7 @@ Plenty of room for improvement!
 
 ## Attempt #2 ##
 
-
-    
+I am going to skip forward to commit #dc659709ec94c9d414df8b04f62322f74e1e4a0d.  Between that commit and the earlier one was a bit of clarification of code, a few declaration changes, but nothing that would redefine the nature of the code
 
 
 
