@@ -102,14 +102,7 @@ long convert_kmer_to_index(char *str, long kmer, long error_pos) {
 
 ```
 
-```
 
-time ./kmer_count_total ~/emp/data/sequences/study_940_split_library_seqs.fna 6 > /dev/null
-
-real	1m4.811s
-user	1m3.512s
-sys	0m0.628s
-```
     
 Why was it so slow? Valgrind revealed some telling issues with my conversion function. Our switch statement was slow, and our strtol was taking up a bulk of our code.
 
@@ -121,4 +114,8 @@ I am going to skip forward to commit #dc659709ec94c9d414df8b04f62322f74e1e4a0d. 
 
 
 
+calvin@barnabas:~/dna-utils$ time ./kmer_count_total ~/emp/data/sequences/study_940_split_library_seqs.fna 6 > /dev/null
+
+
+
 
