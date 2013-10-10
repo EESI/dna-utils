@@ -1,14 +1,10 @@
 // Copyright 2013 Calvin Morrison
 #include <errno.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "kmer_utils.h"
-
-unsigned long position = 0;
-
 const unsigned char alpha[256] = 
 {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
@@ -27,6 +23,7 @@ int main(int argc, char **argv) {
   size_t len = 0;
   ssize_t read;
   long i = 0;
+	long posistion = 0;
 
   if(argc != 3) {
     printf("Please supply a filename and a kmer\n");
@@ -58,8 +55,23 @@ int main(int argc, char **argv) {
 				line[i] = alpha[line[i]];
 			}
 
-      for(position = 0; position < (read - kmer); position++) {
-        counts[num_to_index(&line[position],kmer, width)]++;
+      for(posistion = 0; posistion < (read - kmer); posistion++) {
+				unsigned long out = 0;
+				unsigned long multiply = 1;
+				
+
+				for(i = posistion + kmer - 1; i >= posistion; i--){
+					if(line[i] >> 2) { 
+						out = width;
+						posistion = i;
+						goto next;
+					}
+
+					out += line[i] * multiply;
+					multiply = multiply << 2;
+				}
+				next:
+        counts[out]++;
       }
     } 
   }
