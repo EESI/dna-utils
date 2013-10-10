@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
   const unsigned int kmer = atoi(argv[2]);
 
   // width is 4^kmer 
-  const unsigned long width = pow(4, kmer);
+	const unsigned long width = (unsigned long)1 << (kmer * 2);
 
   // malloc our counts matrix
   unsigned long long * const counts = malloc((width+ 1) * sizeof(unsigned long long));
