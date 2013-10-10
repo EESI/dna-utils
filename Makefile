@@ -1,6 +1,6 @@
 VERSION=\"v0.0.1\"
 CC = gcc
-CFLAGS = -O3 -s -mtune=native -Wall -lm -DVERSION=$(VERSION) -Wextra
+CFLAGS = -O3 -s -mtune=native -Wall -DVERSION=$(VERSION) -Wextra
 
 all: libkmer.so kmer_total_count kmer_frequency_per_sequence
 
