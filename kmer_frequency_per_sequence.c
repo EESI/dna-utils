@@ -10,7 +10,6 @@ unsigned long position = 0;
 int main(int argc, char **argv) {
 
   char *line = NULL;
-  long kmer = 6;
   size_t len = 0;
   ssize_t read;
 
@@ -24,6 +23,12 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Error opening %s - %s\n", argv[1], strerror(errno));
     exit(EXIT_FAILURE);
   }
+
+	unsigned long kmer = atoi(argv[2]);
+	if(kmer == 0) { 
+		fprintf(stderr, "Error: invalid kmer.\n");
+		exit(EXIT_FAILURE);
+	}
 
 	const unsigned long width = (unsigned long)1 << (kmer * 2);
 
@@ -41,7 +46,7 @@ int main(int argc, char **argv) {
 			memset(counts, 0, width);
 
   		for(i = 0; i < read - kmer; i++) {
-				line[i] = alpha[line[i]];
+				line[i] = alpha[(int)line[i]];
 			}
 
       for(i = 0; i < read - kmer; i++) {

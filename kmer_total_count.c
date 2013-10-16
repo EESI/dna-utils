@@ -11,9 +11,15 @@ int main(int argc, char **argv) {
   unsigned long long i = 0;
 
   if(argc !=  3) {
-    printf("Please supply a filename and a kmer\n");
+    fprintf(stderr, "Please supply a filename and a kmer\n");
     exit(EXIT_FAILURE);
   }
+
+	unsigned long kmer = atoi(argv[2]);
+	if(kmer == 0) { 
+		fprintf(stderr, "Error: invalid kmer.\n");
+		exit(EXIT_FAILURE);
+	}
 
 	unsigned long long *counts = get_kmer_counts_from_file(argv[1], atoi(argv[2]));
 
