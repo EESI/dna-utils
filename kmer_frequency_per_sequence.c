@@ -7,19 +7,6 @@
 #include "kmer_utils.h"
 
 unsigned long position = 0;
-
-const unsigned char alpha[256] = 
-{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 5, 1, 5, 5, 5, 2, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 5, 1, 5, 5, 5, 2,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
-
 int main(int argc, char **argv) {
 
   char *line = NULL;
@@ -40,13 +27,18 @@ int main(int argc, char **argv) {
 
 	const unsigned long width = (unsigned long)1 << (kmer * 2);
 
+	unsigned long long *counts = malloc((width+ 1) * sizeof(unsigned long long));
+	if(counts == NULL) 
+		exit(EXIT_FAILURE);
+
   while ((read = getline(&line, &len, fh)) != -1) {
     if(line[0] != '>' && (read > kmer)) {
 
       unsigned int i = 0;
-      unsigned long long *counts = malloc((width+ 1) * sizeof(unsigned long long));
-      if(counts == NULL) 
-        exit(EXIT_FAILURE);
+      unsigned long total = 0;
+
+			// reset our count matrix to zero
+			memset(counts, 0, width);
 
   		for(i = 0; i < read - kmer; i++) {
 				line[i] = alpha[line[i]];
@@ -56,7 +48,6 @@ int main(int argc, char **argv) {
         counts[num_to_index(&line[i],kmer, width)]++;
       }
 
-      unsigned long total = 0;
       for(i = 0; i < width; i++)
         total += counts[i];
 
