@@ -46,35 +46,8 @@ inline unsigned long num_to_index(const char *str, const int kmer, const long er
   return out;
 }
 
-void convert_kmer_to_num(char *str, const unsigned long length) {
-
-  unsigned long i = 0;
-
-  for(i = 0; i < length; i++) {
-    // this is _not_ portable, only works with ASCII values.
-    switch(str[i] | 0x20 ) {
-      case 'a':
-        str[i] = 0;
-        break;
-      case 'c':
-        str[i] = 1;
-        break;
-      case 'g':
-        str[i] = 2;
-        break;
-      case 't':
-        str[i] = 3;
-        break;
-      default:
-        // Error Checking: use 4 so we can shift right twice
-        // to check quickly is there is an non ACGT character 
-        str[i] = 5;
-    }
-
-  }
-
-}
-
+// Strip out any character 'c' from char array 's' into a destination dest (you
+// need to allocate that) and copy only len characters.
 char *strnstrip(const char *s, char *dest, int c, unsigned long long len) {
 
 	unsigned long long i = 0;
