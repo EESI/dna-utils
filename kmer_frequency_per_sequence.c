@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
       unsigned long total = 0;
 
 			// reset our count matrix to zero
-			memset(counts, 0, width * sizeof(unsigned long long));
+			memset(counts, 0, width);
 
   		for(i = 0; i < read - kmer; i++) {
 				line[i] = alpha[(int)line[i]];
@@ -53,14 +53,17 @@ int main(int argc, char **argv) {
         counts[num_to_index(&line[i],kmer, width)]++;
       }
 
-      for(i = 0; i < width - 1; i++)
-        printf("%llu\t", counts[i]);
-      printf("%llu\n", counts[width - 1]);
+      for(i = 0; i < width; i++)
+        total += counts[i];
 
+      for(i = 0; i < width - 1; i++)
+        printf("%.12f\t", (double)counts[i] / total);
+      printf("%.12f\n", (double)counts[width - 1] / total);
+
+      free(counts);
     }
   }
 
-	free(counts);
   free(line);
 
 
