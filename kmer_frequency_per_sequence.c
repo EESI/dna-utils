@@ -60,10 +60,10 @@ int main(int argc, char **argv) {
         printf("%.12f\t", (double)counts[i] / total);
       printf("%.12f\n", (double)counts[width - 1] / total);
 
-      free(counts);
     }
   }
 
+	free(counts);
   free(line);
 
 
