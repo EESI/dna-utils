@@ -57,8 +57,8 @@ int main(int argc, char **argv) {
         total += counts[i];
 
       for(i = 0; i < width - 1; i++)
-        printf("%.12f\t", (double)counts[i] / total);
-      printf("%.12f\n", (double)counts[width - 1] / total);
+        printf("%llu\t", counts[i]);
+      printf("%llu\n", counts[width - 1]);
 
     }
   }

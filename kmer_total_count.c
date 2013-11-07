@@ -28,7 +28,6 @@ int main(int argc, char **argv) {
 
 	// print out our counts arrray
 	// manually unrolled 4 loops to reduce fprintf calls
-	
 	if(argc == 3) {
 		for(i = 0; i < width; i=i+4)
 			fprintf(stdout, "%llu\n%llu\n%llu\n%llu\n", counts[i], counts[i+1], counts[i+2], counts[i+3]);
