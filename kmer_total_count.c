@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 		if(label) {
 			for(i = 0; i < width; i++)
 				if(counts[i] != 0) 
-					fprintf(stdout, "%s\t%llu\n", index_to_kmer(i, kmer),i, counts[i]);
+					fprintf(stdout, "%s\t%llu\n", index_to_kmer(i, kmer), counts[i]);
 				
 		}
 		else {
