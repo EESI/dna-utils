@@ -18,6 +18,8 @@ const unsigned char alpha[256] =
 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
 
+const char reverse_alpha[4] = { 'A', 'C', 'G', 'T' };
+
 inline unsigned long long pow_four(unsigned long long x) {
 	return (unsigned long long)1 << (x * 2);
 }
@@ -44,6 +46,36 @@ inline unsigned long num_to_index(const char *str, const int kmer, const long er
   }
 
   return out;
+}
+
+// convert an index back into a kmer string
+char *index_to_kmer(unsigned long long index, long kmer)  {
+
+	int num_array[64];
+	char *ret = malloc(64);
+	if(ret == NULL)
+		exit(EXIT_FAILURE);
+		
+	int i = 0;
+	int j = 0;
+
+	while (index != 0) {
+		num_array[i] = index % 4;
+		index /= 4;
+		i++;
+	}
+	
+	ret[i] = '\0';
+	i--;  
+
+	for(j = 0; j < (kmer - i -1); j++)
+		ret[j] = 'A';
+	
+	for(; i>=0; i--) {
+	 ret[i+j] = reverse_alpha[num_array[i]];
+	}
+
+	return ret;
 }
 
 // Strip out any character 'c' from char array 's' into a destination dest (you
