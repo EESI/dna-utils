@@ -185,5 +185,6 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
 		}
 	} 
 
+  free(line);
 	return counts;
 }
