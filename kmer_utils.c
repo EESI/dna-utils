@@ -51,30 +51,43 @@ inline unsigned long num_to_index(const char *str, const int kmer, const long er
 // convert an index back into a kmer string
 char *index_to_kmer(unsigned long long index, long kmer)  {
 
-	int num_array[64];
-	char *ret = calloc(64, sizeof(char));
+	int i = 0;
+	int j = 0;
+	char *num_array = calloc(kmer,  sizeof(char));
+	char *ret = calloc(kmer + 1, sizeof(char));
 	if(ret == NULL)
 		exit(EXIT_FAILURE);
 		
-	int i = 0;
-	int j = 0;
 
+	// this is the core of the conversion. modulus 4 for base 4 conversion
 	while (index != 0) {
 		num_array[i] = index % 4;
 		index /= 4;
 		i++;
 	}
 	
-	ret[i] = '\0';
-	i--;  
-
-	for(j = 0; j < (kmer - i -1); j++)
+	// for our first few nmers, like AAAAA, the output would only be "A" instead
+	// of AAAAA so we prepend it
+	for(j = 0; j < (kmer - i); j++)
 		ret[j] = 'A';
-	
-	for(; i>=0; i--) {
-	 ret[i+j] = reverse_alpha[num_array[i]];
-	}
 
+	// our offset for how many chars we prepended
+	int offset = j;
+	// save i so we can print it
+	int start = i ;
+
+	// decrement i by 1 to reverse the last i++
+	i--;  
+	j = 0;
+
+	// reverse the array, as j increases, decrease i
+	for(j = 0; j < start; j++, i--) 
+		ret[j + offset] = reverse_alpha[num_array[i]];
+	
+  // set our last character to the null termination byte
+	ret[kmer + 1] = '\0';
+
+	free(num_array);
 	return ret;
 }
 
@@ -104,7 +117,7 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
   ssize_t read;
 
   long long i = 0;
-	long long posistion = 0;
+	long long position = 0;
 
   FILE * const fh = fopen(fn, "r");
   if(fh == NULL) {
@@ -161,15 +174,15 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
 		}
 
 		// loop through our string to process each k-mer
-		for(posistion = 0; posistion < (seq_length - kmer + 1); posistion++) {
+		for(position = 0; position < (seq_length - kmer + 1); position++) {
 			unsigned long mer = 0;
 			unsigned long multiply = 1;
 
 			// for each char in the k-mer check if it is an error char
-			for(i = posistion + kmer - 1; i >= posistion; i--){
+			for(i = position + kmer - 1; i >= position; i--){
 				if(str[i] == 5) { 
 					mer = width;
-					posistion = i;
+					position = i;
 					goto next;
 				}
 
