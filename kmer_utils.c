@@ -52,7 +52,7 @@ inline unsigned long num_to_index(const char *str, const int kmer, const long er
 char *index_to_kmer(unsigned long long index, long kmer)  {
 
 	int num_array[64];
-	char *ret = malloc(64);
+	char *ret = calloc(64, sizeof(char));
 	if(ret == NULL)
 		exit(EXIT_FAILURE);
 		
@@ -117,7 +117,7 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
 	const unsigned long width = pow_four(kmer); 
 
 	// malloc our return array
-  unsigned long long * counts = malloc((width+ 1) * sizeof(unsigned long long));
+  unsigned long long * counts = calloc((width+ 1), sizeof(unsigned long long));
   if(counts == NULL)  {
 		fprintf(stderr, strerror(errno));
     exit(EXIT_FAILURE);
@@ -186,5 +186,8 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
 	} 
 
   free(line);
+	free(str);
+	fclose(fh);
+
 	return counts;
 }
