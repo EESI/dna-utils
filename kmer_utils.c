@@ -82,7 +82,7 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 
 	// reverse the array, as j increases, decrease i
 	for(j = 0; j < start; j++, i--) 
-		ret[j + offset] = reverse_alpha[num_array[i]];
+		ret[j + offset] = reverse_alpha[(int)num_array[i]];
 	
   // set our last character to the null termination byte
 	ret[kmer + 1] = '\0';
@@ -151,6 +151,9 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
 		if(start == NULL) 
 			continue;
 
+		// point to one past that.
+		start = start + 1;
+
 		size_t start_len = strlen(start);
 
 
@@ -162,6 +165,7 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
 				fprintf(stderr, strerror(errno));
 			}
 		}
+
 
 		// strip out all other newlines to handle multiline sequences
 		str = strnstrip(start, str, '\n',start_len);
