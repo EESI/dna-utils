@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 			// reset our count matrix to zero
 			memset(counts, 0, width * sizeof(unsigned long long));
 
-			for(i = 0; i < read - kmer; i++) {
+			for(i = 0; i < read; i++) {
 				line[i] = alpha[(int)line[i]];
 			}
 
