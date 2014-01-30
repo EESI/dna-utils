@@ -26,7 +26,7 @@ inline unsigned long long pow_four(unsigned long long x) {
 
 // convert a string of k-mer size base-4 values  into a
 // base-10 index
-inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos) {
+inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos, size_t *current_position) {
 
   int i = 0;
   unsigned long out = 0;
@@ -35,9 +35,7 @@ inline unsigned long num_to_index(const char *str, const int kmer, const long er
   for(i = kmer - 1; i >= 0; i--){
 
 		if(str[i] == 5) { 
-			#ifndef SHARED
-			position += i;
-			#endif
+			current_position += i;
 			return error_pos;
 		}
 
@@ -48,11 +46,59 @@ inline unsigned long num_to_index(const char *str, const int kmer, const long er
   return out;
 }
 
+// return the number of loaded elements
+unsigned long long load_specific_mers_from_file(char *fn, unsigned int kmer, size_t width, size_t *arr) { 
+		FILE *fh;
+		size_t arr_pos = 0;
+		char line[64];
+
+		fh = fopen(fn, "r");
+		if(fh == NULL) {
+			fprintf(stderr, "Error opening %s - %s\n", fn, strerror(errno));
+			exit(EXIT_FAILURE);
+		}	
+
+   	while (fgets(line, sizeof(line), fh) != NULL) {
+			size_t i;
+			size_t len;
+
+			len = strlen(line);
+			if(len == 0)
+				continue;
+
+			len--;
+			line[len] = '\0';
+
+
+			if(len != kmer)  {
+				fprintf(stderr, "SKIPPING: '%s' is not length %u\n", line, kmer);
+				continue;
+			}
+			
+			for(i = 0; i < len; i++) {
+				line[i] = alpha[(int)line[i]];
+			}
+				
+		 	size_t mer = num_to_index(line, kmer, width, NULL);
+			if(mer == width) {
+				fprintf(stderr, "SKIPPING: '%s' is a unrecognized mer\n", line);
+				continue;
+			}
+			else {
+				arr[arr_pos] = mer;
+				arr_pos++;
+			}
+		}
+
+		fclose(fh);
+		return arr_pos;
+}
+
 // convert an index back into a kmer string
 char *index_to_kmer(unsigned long long index, long kmer)  {
 
-	int i = 0;
-	int j = 0;
+	size_t i = 0;
+	size_t j = 0;
 	char *num_array = calloc(kmer,  sizeof(char));
 	char *ret = calloc(kmer + 1, sizeof(char));
 	if(ret == NULL)
@@ -74,7 +120,7 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 	// our offset for how many chars we prepended
 	int offset = j;
 	// save i so we can print it
-	int start = i ;
+	size_t start = i ;
 
 	// decrement i by 1 to reverse the last i++
 	i--;  
@@ -116,8 +162,8 @@ unsigned long long * get_kmer_counts_from_file(const char *fn, const unsigned in
   size_t len = 0;
   ssize_t read;
 
-  long long i = 0;
-	long long position = 0;
+  size_t i = 0;
+	size_t position = 0;
 
   FILE * const fh = fopen(fn, "r");
   if(fh == NULL) {
