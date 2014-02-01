@@ -1,5 +1,6 @@
 // Copyright 2013 Calvin Morrison
 #include <errno.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,43 +33,112 @@ void help() {
 int main(int argc, char **argv) {
 
 	// getdelim variables
+	char *fn = NULL;
+	FILE *fh = NULL;
+
+	// for specific mers
+	char *mer_fn = NULL;
+	size_t num_desired_indicies = 0;
+	size_t *desired_indicies = NULL;
+
+	// for getdelim
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
 
-	// specific mer variables
+	// sizes
+	unsigned int kmer = 0;
+	size_t width = 0;
+
+	bool sparse = false;
+	bool kmer_set = false;
 	bool specific_mers = false;
-	size_t num_desired_indicies = 0;
-	size_t *desired_indicies = NULL;
 
+	static struct option long_options[] = {
+		{"input", required_argument, 0, 'i'},
+		{"kmer",  required_argument, 0, 'k'},
+		{"sparse", no_argument, 0, 's'},
+		{"mer-file", required_argument, 0, 'm'},
+		{"help", no_argument, 0, 'h'},
+		{0, 0, 0, 0}
+	};
 
-	if(argc < 3) {
-		printf("Please supply a filename and a kmer\n");
+	while (1) {
+
+		int option_index = 0;
+		int c = 0;
+
+		c = getopt_long (argc, argv, "i:k:m:vsh", long_options, &option_index);
+
+		if (c == -1)
+			break;
+
+		switch (c) {
+			case 'i':
+				fn = optarg;
+				break;
+			case 'k':
+				kmer = atoi(optarg);
+				kmer_set = true;
+				break;
+			case 's':
+				sparse = true;
+				break;
+			case 'm':
+				mer_fn = optarg;
+				specific_mers = true;
+				break;
+			case 'h':
+				help();
+				exit(EXIT_SUCCESS);
+				break;
+			case 'v':
+				printf("dna-utils version " VERSION "\n");
+				exit(EXIT_SUCCESS);
+				break;
+			default:
+				break;
+		}
+	}
+	if(argc == 1) {
+		help();
 		exit(EXIT_FAILURE);
 	}
-
-	unsigned long kmer = atoi(argv[2]);
+	if(fn == NULL) {
+		fprintf(stderr, "no input file specified with -i, reading from stdin\n");
+		fh = stdin;
+	}
+	else {
+		fh = fopen(fn, "r");
+		if(fh == NULL) {
+			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+	}
+	if(!kmer_set) {
+		fprintf(stderr, "Error: kmer (-k) must be supplied\n");
+		exit(EXIT_FAILURE);
+	}
 	if(kmer == 0) { 
-		fprintf(stderr, "Error: invalid kmer.\n");
+		fprintf(stderr, "Error: invalid kmer - '%d'.\n", kmer);
 		exit(EXIT_FAILURE);
 	}
 
-	const unsigned long long width = (unsigned long long)1 << (kmer * 2);
+ 	width = (unsigned long long)1 << (kmer * 2);
 
-	if(argc == 4) {
-		specific_mers = true;
+	if(specific_mers) {
+		sparse = false;
 		desired_indicies = malloc((width) * sizeof(size_t));
 		if(desired_indicies == NULL) 
 			exit(EXIT_FAILURE);
-		num_desired_indicies = load_specific_mers_from_file(argv[3], kmer, width, desired_indicies);
-
+		num_desired_indicies = load_specific_mers_from_file(mer_fn, kmer, width, desired_indicies);
+		if(num_desired_indicies == 0) {
+			fprintf(stderr, "Error: no mers loaded from file"); 
+			exit(EXIT_FAILURE);
+		}
 	}
 
-	FILE *fh = fopen(argv[1], "r" );
-	if(fh == NULL) {
-		fprintf(stderr, "Error opening %s - %s\n", argv[1], strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+
 	unsigned long long *counts = malloc((width+ 1) * sizeof(unsigned long long));
 	if(counts == NULL) 
 		exit(EXIT_FAILURE);
@@ -79,10 +149,11 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	unsigned long long str_size = BUFSIZ;
+	size_t str_size = BUFSIZ;
 	unsigned long long sequence = 0;
 	while ((read = getdelim(&line, &len, '>', fh)) != -1) {
-		size_t i = 0;
+		long long i = 0;
+		size_t k = 0;
 
 		memset(counts, 0, width * sizeof(unsigned long long));
 
@@ -113,30 +184,42 @@ int main(int argc, char **argv) {
 
 		// reset our count matrix to zero
 
-		for(i = 0; i < seq_length; i++) {
-			str[i] = alpha[(int)str[i]];
+		for(k = 0; k < seq_length; k++) {
+			str[k] = alpha[(int)str[k]];
 		}
 
-		for(i = 0; i < (seq_length - kmer + 1); i++) {
+		for(i = 0; i < (signed long long)(seq_length - kmer + 1); i++) {
 			size_t mer = num_to_index(&str[i],kmer, width, &i);
 			counts[mer]++;
 		}
 		
 
 		if(specific_mers) {
-			for(i = 0; i < num_desired_indicies; i++)
-				printf("%llu\t%zu\t%llu\n", sequence, desired_indicies[i], counts[desired_indicies[i]]);
-			sequence++;
+			for(k = 0; k < num_desired_indicies; k++) {
+				if(desired_indicies[k] != 0)
+					fprintf(stdout, "%llu\t%zu\t%llu\n", sequence, desired_indicies[k], counts[desired_indicies[k]]);
+			}
 		} 
-		else {
-			for(i = 0; i < width - 1; i++)
-				printf("%llu\t", counts[i]);
-			printf("%llu\n", counts[width - 1]);
+		else if(sparse) {
+			for(k = 0; k < width; k++) {
+				if(counts[k] != 0)
+					fprintf(stdout, "%llu\t%zu\t%llu\n", sequence, k, counts[k]);
+			}
 		}
+		else {
+			for(k = 0; k < width - 1; k++)
+				fprintf(stdout, "%llu\t", counts[k]);
+			fprintf(stdout, "%llu\n", counts[width - 1]);
+		}
+
+		sequence++;
 	}
 
 free(counts);
 free(line);
+free(desired_indicies);
+free(str);
+fclose(fh);
 
 
 return EXIT_SUCCESS;
