@@ -20,6 +20,12 @@ int main(int argc, char **argv) {
 	size_t num_desired_indicies = 0;
 	size_t *desired_indicies = NULL;
 
+
+	if(argc < 3) {
+		printf("Please supply a filename and a kmer\n");
+		exit(EXIT_FAILURE);
+	}
+
 	unsigned long kmer = atoi(argv[2]);
 	if(kmer == 0) { 
 		fprintf(stderr, "Error: invalid kmer.\n");
@@ -27,11 +33,6 @@ int main(int argc, char **argv) {
 	}
 
 	const unsigned long long width = (unsigned long long)1 << (kmer * 2);
-
-	if(argc < 3) {
-		printf("Please supply a filename and a kmer\n");
-		exit(EXIT_FAILURE);
-	}
 
 	if(argc == 4) {
 		specific_mers = true;
