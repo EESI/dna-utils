@@ -13,10 +13,10 @@ void help() {
 	printf("usage: kmer_total_count -i input_file -k kmer [-n] [-l] ...\n\n");
 	printf("count mers in size k from a fasta file\n");
 	printf("\n");
-	printf("  --input,   -i  input fasta file to count\n");
-	printf("  --kmer,    -k  size of mers to count\n");
-	printf("  --nonzero, -n  only print non-zero values\n");
-	printf("  --label,   -l  print mer along with value\n");
+	printf("  --input    -i  input fasta file to count\n");
+	printf("  --kmer     -k  size of mers to count\n");
+	printf("  --nonzero  -n  only print non-zero values\n");
+	printf("  --label    -l  print mer along with value\n");
 	printf("\n");
 	printf("Report all bugs to mutantturkey@gmail.com\n");
 	printf("\n");
@@ -28,7 +28,6 @@ void help() {
 	printf("software available at www.github.com/EESI/dna-utils/\n");
 }
 int main(int argc, char **argv) {
-
 
 	char *filename = NULL;
 
