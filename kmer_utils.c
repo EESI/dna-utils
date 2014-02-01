@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kmer_total_count.h"
 
 const unsigned char alpha[256] = 
 {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
@@ -20,13 +19,13 @@ const unsigned char alpha[256] =
 
 const char reverse_alpha[4] = { 'A', 'C', 'G', 'T' };
 
-inline unsigned long long pow_four(unsigned long long x) {
+unsigned long long pow_four(unsigned long long x) {
 	return (unsigned long long)1 << (x * 2);
 }
 
 // convert a string of k-mer size base-4 values  into a
 // base-10 index
-inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos, size_t *current_position) {
+inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos, long long *current_position) {
 
   int i = 0;
   unsigned long out = 0;
@@ -141,8 +140,8 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 // need to allocate that) and copy only len characters.
 char *strnstrip(const char *s, char *dest, int c, unsigned long long len) {
 
-	unsigned long long i = 0;
-	unsigned long long j = 0;
+	size_t i = 0;
+	size_t j  = 0;
 
 	for(i = 0; i < len; i++) {
 		if(s[i] != c) {
