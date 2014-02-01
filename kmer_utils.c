@@ -27,22 +27,21 @@ unsigned long long pow_four(unsigned long long x) {
 // base-10 index
 inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos, long long *current_position) {
 
-  int i = 0;
-  unsigned long out = 0;
-  unsigned long multiply = 1;
+	int i = 0;
+	unsigned long out = 0;
+	unsigned long multiply = 1;
 
-  for(i = kmer - 1; i >= 0; i--){
-
+	for(i = kmer - 1; i >= 0; i--){
 		if(str[i] == 5) { 
 			current_position += i;
 			return error_pos;
 		}
 
-    out += str[i] * multiply;
-    multiply = multiply << 2;
-  }
+		out += str[i] * multiply;
+		multiply = multiply << 2;
+	}
 
-  return out;
+	return out;
 }
 
 // return the number of loaded elements
