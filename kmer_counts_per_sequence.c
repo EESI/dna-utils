@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
- 	width = (unsigned long long)1 << (kmer * 2);
+ 	width = pow_four(kmer);
 
 	if(specific_mers) {
 		sparse = false;
