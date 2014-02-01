@@ -80,6 +80,11 @@ int main(int argc, char **argv) {
 			case 'h':
 				help();
 				exit(EXIT_SUCCESS);
+				break;
+			case 'v':
+				printf("dna-utils version " VERSION "\n");
+				exit(EXIT_SUCCESS);
+				break;
 			default:
 				break;
 		}
