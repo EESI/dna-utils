@@ -10,22 +10,22 @@
 
 
 void help() {
-	printf("usage: kmer_total_count -i input_file -k kmer [-n] [-l] ...\n\n");
-	printf("count mers in size k from a fasta file\n");
-	printf("\n");
-	printf("  --input    -i  input fasta file to count\n");
-	printf("  --kmer     -k  size of mers to count\n");
-	printf("  --nonzero  -n  only print non-zero values\n");
-	printf("  --label    -l  print mer along with value\n");
-	printf("\n");
-	printf("Report all bugs to mutantturkey@gmail.com\n");
-	printf("\n");
-	printf("Copyright 2014 Calvin Morrison, Drexel University.\n");
-	printf("\n");
-	printf("If you are using any dna-utils tool for a publication\n");
-	printf("please cite your usage:\n\n");
-	printf("dna-utils. Drexel University, Philadelphia USA, 2014;\n");
-	printf("software available at www.github.com/EESI/dna-utils/\n");
+	printf("usage: kmer_total_count -i input_file -k kmer [-n] [-l] ...\n\n"
+				 "count mers in size k from a fasta file\n"
+				 "\n"
+				 "  --input    -i  input fasta file to count\n"
+				 "  --kmer     -k  size of mers to count\n"
+				 "  --nonzero  -n  only print non-zero values\n"
+				 "  --label    -l  print mer along with value\n"
+				 "\n"
+				 "Report all bugs to mutantturkey@gmail.com\n"
+				 "\n"
+				 "Copyright 2014 Calvin Morrison, Drexel University.\n"
+				 "\n"
+				 "If you are using any dna-utils tool for a publication\n"
+				 "please cite your usage:\n\n"
+				 "dna-utils. Drexel University, Philadelphia USA, 2014;\n"
+				 "software available at www.github.com/EESI/dna-utils/\n");
 }
 int main(int argc, char **argv) {
 

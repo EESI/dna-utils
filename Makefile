@@ -1,8 +1,9 @@
-VERSION=\"v0.0.1\"
+VERSION=\"0.0.2\"
 CC = gcc
 CFLAGS = -O3 -s -mtune=native -Wall -DVERSION=$(VERSION) -Wextra
 
-all: libkmer.o libkmer.so kmer_total_count kmer_counts_per_sequenc
+
+all: libkmer.o libkmer.so kmer_total_count kmer_counts_per_sequence
 
 libkmer.o: kmer_utils.c
 	$(CC) -c kmer_utils.c -o libkmer.o $(CFLAGS) -fPIC
@@ -15,3 +16,6 @@ kmer_counts_per_sequence: libkmer.o kmer_counts_per_sequence.c kmer_utils.h
 
 clean:
 	rm -vf kmer_total_count kmer_counts_per_sequence libkmer.so libkmer.o
+
+debug: CFLAGS = -ggdb -Wall -Wextra -DVERSION=$(VERSION)\"-debug\"
+debug: all
