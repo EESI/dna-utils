@@ -7,7 +7,28 @@
 
 #include "kmer_utils.h"
 
-unsigned long position = 0;
+void help() {
+	printf("usage: kmer_counts_per_sequence input_file kmer [kmer-file] ...\n\n"
+				 "count mers in each sequence of size k from a fasta file\n"
+				 "\n"
+				 "  --input    -i  input fasta file to count\n"
+				 "  --kmer     -k  size of mers to count\n"
+				 "  --mer-file -m  a file containing a list of mers you are interested\n"
+				 "                 in opening. this will enable output your results in\n"
+				 "                 a sparse format \n"
+				 "  --sparse   -s  output values in a sparse format. output is in the\n"
+				 "                 order sequence_number, mer_index, value\n"
+				 "\n"
+				 "Report all bugs to mutantturkey@gmail.com\n"
+				 "\n"
+				 "Copyright 2014 Calvin Morrison, Drexel University.\n"
+				 "\n"
+				 "If you are using any dna-utils tool for a publication\n"
+				 "please cite your usage:\n\n"
+				 "dna-utils. Drexel University, Philadelphia USA, 2014;\n"
+				 "software available at www.github.com/EESI/dna-utils/\n");
+}
+
 int main(int argc, char **argv) {
 
 	// getdelim variables
