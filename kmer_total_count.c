@@ -33,9 +33,9 @@ int main(int argc, char **argv) {
 
 	unsigned int kmer = 0;
 
-	bool nonzero = 0;
-	bool label = 0;
-	bool kmer_set = 0;
+	bool nonzero = false;
+	bool label = false;
+	bool kmer_set = false;
 
 	unsigned long long width = 0;
 
