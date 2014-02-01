@@ -27,9 +27,12 @@ void help() {
 				 "dna-utils. Drexel University, Philadelphia USA, 2014;\n"
 				 "software available at www.github.com/EESI/dna-utils/\n");
 }
+
+
 int main(int argc, char **argv) {
 
-	char *filename = NULL;
+	char *fn = NULL;
+	FILE *fh = NULL;
 
 	unsigned int kmer = 0;
 
@@ -62,7 +65,7 @@ int main(int argc, char **argv) {
 
 		switch (c) {
 			case 'i':
-				filename = optarg;
+				fn = optarg;
 				break;
 			case 'k':
 				kmer = atoi(optarg);
@@ -81,11 +84,22 @@ int main(int argc, char **argv) {
 				break;
 		}
 	}
-	if(filename == NULL) {
-		fprintf(stderr, "Error: filename (-i) must be supplied\n");
+	if(argc == 1) {
+		help();
 		exit(EXIT_FAILURE);
 	}
-	if(kmer == 0 && !kmer_set) {
+	if(fn == NULL) {
+		fprintf(stderr, "no input file specified with -i, reading from stdin\n");
+		fh = stdin;
+	}
+	else {
+		fh = fopen(fn, "r");
+		if(fh == NULL) {
+			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+	}
+	if(!kmer_set) {
 		fprintf(stderr, "Error: kmer (-k) must be supplied\n");
 		exit(EXIT_FAILURE);
 	}
@@ -96,7 +110,7 @@ int main(int argc, char **argv) {
 
 	width = pow_four(kmer);
 
-	unsigned long long *counts = get_kmer_counts_from_file(filename, kmer);
+	unsigned long long *counts = get_kmer_counts_from_file(fh, kmer);
 
 	// If nonzero is set, only print non zeros
 	if(nonzero) {
