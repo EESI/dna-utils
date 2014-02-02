@@ -136,6 +136,7 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 }
 
 // Strip out any character 'c' from char array 's'
+// returns length of new string
 size_t strnstrip(char *s, int c, size_t len) {
 
 	size_t i = 0;
