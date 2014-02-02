@@ -1,6 +1,7 @@
 VERSION=\"0.0.2\"
 CC = gcc
 CFLAGS = -O3 -s -mtune=native -Wall -DVERSION=$(VERSION) -Wextra
+DESTDIR = /usr/local/
 
 
 all: libkmer.o libkmer.so kmer_total_count kmer_counts_per_sequence
@@ -19,3 +20,8 @@ clean:
 
 debug: CFLAGS = -ggdb -Wall -Wextra -DVERSION=$(VERSION)\"-debug\"
 debug: all
+
+install: all
+	@cp -vf kmer_counts_per_sequence kmer_total_count $(DESTDIR)/bin/
+	@cp -vf  libkmer.so  $(DESTDIR)/lib/
+
