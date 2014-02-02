@@ -4,7 +4,7 @@ unsigned long num_to_index(const char *str, const int kmer, const long error_pos
 char *index_to_kmer(unsigned long long index, long kmer);
 
 // Utility functions
-char *strnstrip(const char *s, char *dest, int c, int len);
+size_t strnstrip(char *s, int c, size_t len);
 unsigned long long pow_four(unsigned long long x);
 
 // Variables

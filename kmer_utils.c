@@ -135,23 +135,24 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 	return ret;
 }
 
-// Strip out any character 'c' from char array 's' into a destination dest (you
-// need to allocate that) and copy only len characters.
-char *strnstrip(const char *s, char *dest, int c, unsigned long long len) {
+// Strip out any character 'c' from char array 's'
+size_t strnstrip(char *s, int c, size_t len) {
 
 	size_t i = 0;
 	size_t j  = 0;
 
 	for(i = 0; i < len; i++) {
 		if(s[i] != c) {
-			dest[j] = s[i];
+			if(j != i)
+				s[j] = s[i];
 			j++;
 		}
 	}
 
-	dest[j] = '\0';
+	s[j] = '\0';
 
-	return dest;
+	return j;
+
 }
 
 unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer) {
@@ -174,58 +175,37 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 		exit(EXIT_FAILURE);
 	}
 
-	char *str = malloc(4096);
-	if(str == NULL) { 
-		fprintf(stderr, strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-
-	unsigned long long str_size = 4096;
-
 	while ((read = getdelim(&line, &len, '>', fh)) != -1) {
 		size_t k;
-		char *start;
-		size_t start_len;
+		char *seq;
+		size_t seq_length;
 
 		// find our first \n, this should be the end of the header
-		start = strchr(line, '\n');	
-		if(start == NULL) 
+		seq = strchr(line, '\n');	
+		if(seq == NULL) 
 			continue;
 
 		// point to one past that.
-		start = start + 1;
-
-		start_len = strlen(start);
-
-
-		// if our current str buffer isn't big enough, realloc
-		if(start_len + 1 > str_size + 1) { 
-			str = realloc(str, start_len + 1);
-			if(str == NULL) { 
-				exit(EXIT_FAILURE);
-				fprintf(stderr, strerror(errno));
-			}
-		}
-
+		seq = seq + 1;
 
 		// strip out all other newlines to handle multiline sequences
-		str = strnstrip(start, str, '\n',start_len);
-		size_t seq_length = strlen(str);
+		strnstrip(seq, '\n', strlen(seq));
+		seq_length = strlen(seq);
 
 		// relace A, C, G and T with 0, 1, 2, 3 respectively
 		// everything else is 5 
 		for(k = 0; k < seq_length; k++)
-			str[k] = alpha[(int)str[k]];
+			seq[k] = alpha[(int)seq[k]];
 		
 
-		// loop through our string to process each k-mer
+		// loop through our seq to process each k-mer
 		for(position = 0; position < (signed)(seq_length - kmer + 1); position++) {
 			unsigned long long mer = 0;
 			unsigned long long multiply = 1;
 
 			// for each char in the k-mer check if it is an error char
 			for(i = position + kmer - 1; i >= position; i--){
-				if(str[i] == 5) { 
+				if(seq[i] == 5) { 
 					mer = width;
 					position = i;
 					goto next;
@@ -233,7 +213,7 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 
 				// multiply this char in the mer by the multiply
 				// and bitshift the multiply for the next round
-				mer += str[i] * multiply;
+				mer += seq[i] * multiply;
 				multiply = multiply << 2;
 			}
 			// use this point to get mer of our loop
@@ -244,7 +224,6 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 	} 
 
   free(line);
-	free(str);
 	fclose(fh);
 
 	return counts;

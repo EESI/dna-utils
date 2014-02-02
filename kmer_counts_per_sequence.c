@@ -30,7 +30,9 @@ void help() {
 				 "software available at www.github.com/EESI/dna-utils/\n");
 }
 
+
 int main(int argc, char **argv) {
+
 
 	// getdelim variables
 	char *fn = NULL;
@@ -143,13 +145,6 @@ int main(int argc, char **argv) {
 	if(counts == NULL) 
 		exit(EXIT_FAILURE);
 
-	char *str = malloc(BUFSIZ);
-	if(str == NULL) { 
-		fprintf(stderr, strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-
-	size_t str_size = BUFSIZ;
 	unsigned long long sequence = 0;
 	while ((read = getdelim(&line, &len, '>', fh)) != -1) {
 		long long i = 0;
@@ -158,38 +153,25 @@ int main(int argc, char **argv) {
 		memset(counts, 0, width * sizeof(unsigned long long));
 
 		// find our first \n, this should be the end of the header
-		char *start = strchr(line, '\n');	
-		if(start == NULL) 
+		char *seq = strchr(line, '\n');	
+		if(seq == NULL) 
 			continue;
 
+
 		// point to one past that.
-		start = start + 1;
-
-		size_t start_len = strlen(start);
-
-
-		// if our current str buffer isn't big enough, realloc
-		if(start_len + 1 > str_size + 1) { 
-			str = realloc(str, start_len + 1);
-			if(str == NULL) { 
-				exit(EXIT_FAILURE);
-				fprintf(stderr, strerror(errno));
-			}
-		}
-
+		seq = seq + 1;
 
 		// strip out all other newlines to handle multiline sequences
-		str = strnstrip(start, str, '\n',start_len);
-		size_t seq_length = strlen(str);
+		size_t seq_length = strnstrip(seq, '\n', strlen(seq));
 
 		// reset our count matrix to zero
 
 		for(k = 0; k < seq_length; k++) {
-			str[k] = alpha[(int)str[k]];
+			seq[k] = alpha[(int)seq[k]];
 		}
 
 		for(i = 0; i < (signed long long)(seq_length - kmer + 1); i++) {
-			size_t mer = num_to_index(&str[i],kmer, width, &i);
+			size_t mer = num_to_index(&seq[i],kmer, width, &i);
 			counts[mer]++;
 		}
 		
@@ -218,7 +200,6 @@ int main(int argc, char **argv) {
 free(counts);
 free(line);
 free(desired_indicies);
-free(str);
 fclose(fh);
 
 
