@@ -229,3 +229,14 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 
 	return counts;
 }
+
+unsigned long long * get_kmer_counts_from_filename(const char *fn, const unsigned int kmer) {
+		FILE *fh = fopen(fn, "r");
+		if(fh == NULL) {
+			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
+			return 0;
+		}
+
+		return get_kmer_counts_from_file(fh, kmer);
+}
+
