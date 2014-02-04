@@ -25,7 +25,7 @@ unsigned long long pow_four(unsigned long long x) {
 
 // convert a string of k-mer size base-4 values  into a
 // base-10 index
-inline unsigned long num_to_index(const char *str, const int kmer, const long error_pos, long long *current_position) {
+unsigned long num_to_index(const char *str, const int kmer, const long error_pos, long long *current_position) {
 
 	int i = 0;
 	unsigned long out = 0;
