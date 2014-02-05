@@ -20,19 +20,32 @@ try:
 except:
 	raise Exception("Error: could not load libkmer.so")
 
-def load_kmer_counts_from_file(fh, kmer):
+def get_counts_from_file(fn, kmer):
 	'''
-	'''
-	ret = []
-	width = (kmer ** 4) + 1
-	libkmer.get_kmer_counts_from_filename.restype = c.POINTER(c.c_ulonglong * width )
-	counts = libkmer.get_kmer_counts_from_filename(fh, kmer);
+	load kmer counts from a filename (not a handle), of size kmer.
 
-	if counts.contents:
+returns an array size 4^k of counts
+
+	>>> import kmer
+	>>> counts = kmer.get_counts_from_file("test.fa", 6)
+
+	'''
+
+	if type(fn) is not str:
+		raise TypeError("fn must be a str");
+	if type(kmer) is not int:
+		raise TypeError("fn must be int");
+
+	ret = []
+	width = (kmer ** 4)
+	libkmer.get_kmer_counts_from_filename.restype = c.POINTER(c.c_ulonglong * width )
+	counts = libkmer.get_kmer_counts_from_filename(fn, kmer);
+
+	if counts:
 		for i in counts.contents:
 			ret.append(i)
 	else:
-		ret = 'error'
+		ret = 'error could not count mers on' + str(fn)
 
 	return ret 
 
