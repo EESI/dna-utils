@@ -99,8 +99,10 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 	size_t j = 0;
 	char *num_array = calloc(kmer,  sizeof(char));
 	char *ret = calloc(kmer + 1, sizeof(char));
-	if(ret == NULL)
+	if(ret == NULL || num_array == NULL) {
+		fprintf(stderr, "%s\n", strerror(errno));
 		exit(EXIT_FAILURE);
+	}
 		
 
 	// this is the core of the conversion. modulus 4 for base 4 conversion
@@ -172,7 +174,7 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 	// malloc our return array
 	unsigned long long * counts = calloc((width+ 1), sizeof(unsigned long long));
 	if(counts == NULL)  {
-		fprintf(stderr, strerror(errno));
+		fprintf(stderr, "%s\n", strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 
@@ -234,7 +236,7 @@ unsigned long long * get_kmer_counts_from_filename(const char *fn, const unsigne
 		FILE *fh = fopen(fn, "r");
 		if(fh == NULL) {
 			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
-			return 0;
+			return NULL;
 		}
 
 		return get_kmer_counts_from_file(fh, kmer);

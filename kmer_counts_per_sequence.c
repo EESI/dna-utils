@@ -131,8 +131,10 @@ int main(int argc, char **argv) {
 	if(specific_mers) {
 		sparse = false;
 		desired_indicies = malloc((width) * sizeof(size_t));
-		if(desired_indicies == NULL) 
+		if(desired_indicies == NULL) {
+			fprintf(stderr, "%s\n", strerror(errno));
 			exit(EXIT_FAILURE);
+		}
 		num_desired_indicies = load_specific_mers_from_file(mer_fn, kmer, width, desired_indicies);
 		if(num_desired_indicies == 0) {
 			fprintf(stderr, "Error: no mers loaded from file"); 
@@ -142,8 +144,10 @@ int main(int argc, char **argv) {
 
 
 	unsigned long long *counts = malloc((width+ 1) * sizeof(unsigned long long));
-	if(counts == NULL) 
+	if(counts == NULL)  {
+		fprintf(stderr, "%s\n", strerror(errno));
 		exit(EXIT_FAILURE);
+	}
 
 	unsigned long long sequence = 0;
 	while ((read = getdelim(&line, &len, '>', fh)) != -1) {
@@ -197,11 +201,11 @@ int main(int argc, char **argv) {
 		sequence++;
 	}
 
-free(counts);
-free(line);
-free(desired_indicies);
-fclose(fh);
+	free(counts);
+	free(line);
+	free(desired_indicies);
+	fclose(fh);
 
 
-return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
