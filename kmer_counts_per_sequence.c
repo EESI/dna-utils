@@ -129,7 +129,6 @@ int main(int argc, char **argv) {
  	width = pow_four(kmer);
 
 	if(specific_mers) {
-		sparse = false;
 		desired_indicies = malloc((width) * sizeof(size_t));
 		if(desired_indicies == NULL) {
 			fprintf(stderr, "%s\n", strerror(errno));
@@ -137,7 +136,7 @@ int main(int argc, char **argv) {
 		}
 		num_desired_indicies = load_specific_mers_from_file(mer_fn, kmer, width, desired_indicies);
 		if(num_desired_indicies == 0) {
-			fprintf(stderr, "Error: no mers loaded from file"); 
+			fprintf(stderr, "Error: no mers loaded from file\n"); 
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -181,9 +180,16 @@ int main(int argc, char **argv) {
 		
 
 		if(specific_mers) {
-			for(k = 0; k < num_desired_indicies; k++) {
-				if(desired_indicies[k] != 0)
+			if(sparse) {
+				for(k = 0; k < num_desired_indicies; k++) {
+					if(counts[desired_indicies[k]] != 0)
+						fprintf(stdout, "%llu\t%zu\t%llu\n", sequence, desired_indicies[k], counts[desired_indicies[k]]);
+				}
+			} 
+			else {
+				for(k = 0; k < num_desired_indicies; k++) {
 					fprintf(stdout, "%llu\t%zu\t%llu\n", sequence, desired_indicies[k], counts[desired_indicies[k]]);
+				}
 			}
 		} 
 		else if(sparse) {
