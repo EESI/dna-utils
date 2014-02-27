@@ -180,17 +180,10 @@ int main(int argc, char **argv) {
 		
 
 		if(specific_mers) {
-			if(sparse) {
 				for(k = 0; k < num_desired_indicies; k++) {
 					if(counts[desired_indicies[k]] != 0)
 						fprintf(stdout, "%llu\t%zu\t%llu\n", sequence, desired_indicies[k], counts[desired_indicies[k]]);
 				}
-			} 
-			else {
-				for(k = 0; k < num_desired_indicies; k++) {
-					fprintf(stdout, "%llu\t%zu\t%llu\n", sequence, desired_indicies[k], counts[desired_indicies[k]]);
-				}
-			}
 		} 
 		else if(sparse) {
 			for(k = 0; k < width; k++) {
