@@ -24,6 +24,6 @@ debug: CFLAGS = -ggdb -Wall -Wextra -DVERSION=$(VERSION)\"-debug\"
 debug: all
 
 install: all
-	@cp -vf kmer_counts_per_sequence kmer_total_count $(DESTDIR)/bin/
+	@cp -vf kmer_counts_per_sequence kmer_total_count kmer_continuous_count $(DESTDIR)/bin/
 	@cp -vf  libkmer.so  $(DESTDIR)/lib/
 
