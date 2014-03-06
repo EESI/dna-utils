@@ -23,6 +23,18 @@ unsigned long long pow_four(unsigned long long x) {
 	return (unsigned long long)1 << (x * 2);
 }
 
+void check_null_ptr(void *ptr, const char *error) {
+	if (ptr == NULL) {
+		if(error != NULL)  {
+			fprintf(stderr, "Error: %s - %s\n", error, strerror(errno));
+		} 
+		else {
+			fprintf(stderr, "Error: %s\n", strerror(errno));
+		} 
+		exit(EXIT_FAILURE);
+	}
+}
+
 // convert a string of k-mer size base-4 values  into a
 // base-10 index
 unsigned long num_to_index(const char *str, const int kmer, const long error_pos, long long *current_position) {
@@ -51,10 +63,7 @@ unsigned long long load_specific_mers_from_file(char *fn, unsigned int kmer, siz
 		char line[64];
 
 		fh = fopen(fn, "r");
-		if(fh == NULL) {
-			fprintf(stderr, "Error opening %s - %s\n", fn, strerror(errno));
-			exit(EXIT_FAILURE);
-		}	
+		check_null_ptr(fh, fn);
 
    	while (fgets(line, sizeof(line), fh) != NULL) {
 			size_t i;
@@ -99,10 +108,8 @@ char *index_to_kmer(unsigned long long index, long kmer)  {
 	size_t j = 0;
 	char *num_array = calloc(kmer,  sizeof(char));
 	char *ret = calloc(kmer + 1, sizeof(char));
-	if(ret == NULL || num_array == NULL) {
-		fprintf(stderr, "%s\n", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+	check_null_ptr(num_array, NULL);
+	check_null_ptr(ret, NULL);
 		
 
 	// this is the core of the conversion. modulus 4 for base 4 conversion
@@ -164,24 +171,21 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 	size_t len = 0;
 	ssize_t read;
 
-	long long i = 0;
-	long long position = 0;
-
 	// width is 4^kmer  
 	// there's a sneaky bitshift to avoid pow dependency
 	const unsigned long width = pow_four(kmer); 
 
 	// malloc our return array
 	unsigned long long * counts = calloc((width+ 1), sizeof(unsigned long long));
-	if(counts == NULL)  {
-		fprintf(stderr, "%s\n", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+	check_null_ptr(counts, NULL);
 
 	while ((read = getdelim(&line, &len, '>', fh)) != -1) {
 		size_t k;
 		char *seq;
 		size_t seq_length;
+
+		long long i = 0;
+		long long position = 0;
 
 		// find our first \n, this should be the end of the header
 		seq = strchr(line, '\n');	
@@ -235,10 +239,7 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 
 unsigned long long * get_kmer_counts_from_filename(const char *fn, const unsigned int kmer) {
 		FILE *fh = fopen(fn, "r");
-		if(fh == NULL) {
-			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
-			return NULL;
-		}
+		check_null_ptr(fh, fn);
 
 		return get_kmer_counts_from_file(fh, kmer);
 }
@@ -256,10 +257,7 @@ unsigned long long * get_continuous_kmer_counts_from_file(FILE *fh, const unsign
 
 	// malloc our return array
 	unsigned long long * counts = calloc((width+ 1), sizeof(unsigned long long));
-	if(counts == NULL)  {
-		fprintf(stderr, "%s\n", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+	check_null_ptr(counts, NULL);
 
 	size_t cpy_size = kmer - 1;
 
@@ -327,7 +325,6 @@ unsigned long long * get_continuous_kmer_counts_from_file(FILE *fh, const unsign
 
 	} 
 
-
 	free(end_of_previous);
   free(line);
 	fclose(fh);
@@ -337,10 +334,7 @@ unsigned long long * get_continuous_kmer_counts_from_file(FILE *fh, const unsign
 
 unsigned long long * get_continuous_kmer_counts_from_filename(const char *fn, const unsigned int kmer) {
 		FILE *fh = fopen(fn, "r");
-		if(fh == NULL) {
-			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
-			return NULL;
-		}
+		check_null_ptr(fh, fn);
 
 		return get_continuous_kmer_counts_from_file(fh, kmer);
 }

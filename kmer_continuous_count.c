@@ -11,7 +11,7 @@
 
 
 void help() {
-	printf("usage: kmer_total_count -i input_file -k kmer [-n] [-l] ...\n\n"
+	printf("usage: kmer_continuous_count -i input_file -k kmer [-n] [-l] ...\n\n"
 				 "count mers in size k from a fasta file, but do so continuously\n"
 				 "\n"
 				 "  --input    -i  input fasta file to count\n"

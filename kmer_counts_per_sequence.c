@@ -130,10 +130,7 @@ int main(int argc, char **argv) {
 
 	if(specific_mers) {
 		desired_indicies = malloc((width) * sizeof(size_t));
-		if(desired_indicies == NULL) {
-			fprintf(stderr, "%s\n", strerror(errno));
-			exit(EXIT_FAILURE);
-		}
+		check_null_ptr(desired_indicies, NULL);
 		num_desired_indicies = load_specific_mers_from_file(mer_fn, kmer, width, desired_indicies);
 		if(num_desired_indicies == 0) {
 			fprintf(stderr, "Error: no mers loaded from file\n"); 

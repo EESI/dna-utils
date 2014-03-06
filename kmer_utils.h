@@ -6,6 +6,7 @@ char *index_to_kmer(unsigned long long index, long kmer);
 // Utility functions
 size_t strnstrip(char *s, int c, size_t len);
 unsigned long long pow_four(unsigned long long x);
+void check_null_ptr(void *ptr, const char *error);
 
 // Variables
 const unsigned char alpha[256]; 
@@ -18,3 +19,4 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const int kmer);
 
 unsigned long long * get_continuous_kmer_counts_from_filename(const char *fn, const unsigned int kmer);
 unsigned long long * get_continuous_kmer_counts_from_file(FILE *fh, const unsigned int kmer);
+
