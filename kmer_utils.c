@@ -226,6 +226,7 @@ unsigned long long * get_kmer_counts_from_file(FILE *fh, const unsigned int kmer
 		}
 	} 
 
+
   free(line);
 	fclose(fh);
 
@@ -242,3 +243,104 @@ unsigned long long * get_kmer_counts_from_filename(const char *fn, const unsigne
 		return get_kmer_counts_from_file(fh, kmer);
 }
 
+
+unsigned long long * get_continuous_kmer_counts_from_file(FILE *fh, const unsigned int kmer) {
+	
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t read;
+
+	// width is 4^kmer  
+	// there's a sneaky bitshift to avoid pow dependency
+	const unsigned long width = pow_four(kmer); 
+
+	// malloc our return array
+	unsigned long long * counts = calloc((width+ 1), sizeof(unsigned long long));
+	if(counts == NULL)  {
+		fprintf(stderr, "%s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	size_t cpy_size = kmer - 1;
+
+	char *end_of_previous = malloc(sizeof(char) * cpy_size);
+	memset(end_of_previous, 5, cpy_size);
+
+	if(end_of_previous == NULL) {
+		fprintf(stderr, "%s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	while ((read = getline(&line, &len, fh)) != -1) {
+		if(line[0] == '>')
+			continue;
+
+		char *seq;
+		size_t j;
+		size_t k;
+		long long position;
+		size_t seq_length;
+
+		seq = malloc(read + cpy_size);
+
+		memcpy(seq, end_of_previous, cpy_size);
+		memcpy(seq + cpy_size, line, read);
+
+		seq_length = read + cpy_size;
+
+		// relace A, C, G and T with 0, 1, 2, 3 respectively
+		// everything else is 5 
+		for(k = cpy_size; k < seq_length; k++)
+			seq[k] = alpha[(int)seq[k]];
+		
+
+		// loop through our seq to process each k-mer
+		for(position = 0; position < (signed)(seq_length - kmer + 1); position++) {
+			unsigned long long mer = 0;
+			unsigned long long multiply = 1;
+			long long i;
+
+			// for each char in the k-mer check if it is an error char
+			for(i = position + kmer - 1; i >= position; i--){
+				if(seq[i] == 5) { 
+					mer = width;
+					position = i;
+					goto next;
+				}
+
+				// multiply this char in the mer by the multiply
+				// and bitshift the multiply for the next round
+				mer += seq[i] * multiply;
+				multiply = multiply << 2;
+			}
+			// use this point to get mer of our loop
+			next:
+			// bump up the mer value in the counts array
+			counts[mer]++;
+		}
+
+		for(j = 0, k = seq_length - (cpy_size + 1); k < seq_length; k++, j++) {
+			end_of_previous[j] = seq[k];
+		}
+
+		free(seq);
+
+	} 
+
+
+	free(end_of_previous);
+  free(line);
+	fclose(fh);
+
+	return counts;
+}
+
+unsigned long long * get_continuous_kmer_counts_from_filename(const char *fn, const unsigned int kmer) {
+		FILE *fh = fopen(fn, "r");
+		if(fh == NULL) {
+			fprintf(stderr, "Could not open %s - %s\n", fn, strerror(errno));
+			return NULL;
+		}
+
+		return get_continuous_kmer_counts_from_file(fh, kmer);
+}
