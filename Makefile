@@ -1,4 +1,4 @@
-VERSION=\"0.0.2\"
+VERSION=\"0.0.4\"
 CC = gcc
 CFLAGS = -O3 -s -mtune=native -Wall -DVERSION=$(VERSION) -Wextra
 DESTDIR = /usr/local/
