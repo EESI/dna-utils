@@ -88,6 +88,7 @@ int main(int argc, char **argv) {
 				break;
 			case 'c':
 				count_compliment = true;
+				break;
 			case 's':
 				sparse = true;
 				break;
