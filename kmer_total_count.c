@@ -10,13 +10,14 @@
 
 
 void help() {
-	printf("usage: kmer_total_count -i input_file -k kmer [-n] [-l] ...\n\n"
+	printf("usage: kmer_total_count -i input_file -k kmer [-c] [-n] [-l] ...\n\n"
 				 "count mers in size k from a fasta file\n"
 				 "\n"
-				 "  --input    -i  input fasta file to count\n"
-				 "  --kmer     -k  size of mers to count\n"
-				 "  --nonzero  -n  only print non-zero values\n"
-				 "  --label    -l  print mer along with value\n"
+				 "  --input      -i  input fasta file to count\n"
+				 "  --kmer       -k  size of mers to count\n"
+				 "  --compliment -c  count compliment of sequences\n"
+				 "  --nonzero    -n  only print non-zero values\n"
+				 "  --label      -l  print mer along with value\n"
 				 "\n"
 				 "Report all bugs to mutantturkey@gmail.com\n"
 				 "\n"
@@ -39,6 +40,7 @@ int main(int argc, char **argv) {
 	bool nonzero = false;
 	bool label = false;
 	bool kmer_set = false;
+	bool count_compliment = false;
 
 	unsigned long long width = 0;
 
@@ -47,6 +49,7 @@ int main(int argc, char **argv) {
 	static struct option long_options[] = {
 		{"input", required_argument, 0, 'i'},
 		{"kmer",  required_argument, 0, 'k'},
+		{"compliment", required_argument, 0, 'c'},
 		{"nonzero", no_argument, 0, 'n'},
 		{"label", no_argument, 0, 'l'},
 		{"help", no_argument, 0, 'h'},
@@ -58,7 +61,7 @@ int main(int argc, char **argv) {
 		int option_index = 0;
 		int c = 0;
 
-		c = getopt_long (argc, argv, "i:k:nlvh", long_options, &option_index);
+		c = getopt_long (argc, argv, "i:k:cnlvh", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -70,6 +73,9 @@ int main(int argc, char **argv) {
 			case 'k':
 				kmer = atoi(optarg);
 				kmer_set = true;
+				break;
+			case 'c':
+				count_compliment = true;
 				break;
 			case 'n':
 				nonzero = true; 
@@ -115,7 +121,7 @@ int main(int argc, char **argv) {
 
 	width = pow_four(kmer);
 
-	unsigned long long *counts = get_kmer_counts_from_file(fh, kmer);
+	unsigned long long *counts = get_kmer_counts_from_file(fh, kmer, count_compliment);
 
 	// If nonzero is set, only print non zeros
 	if(nonzero) {

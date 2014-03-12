@@ -12,13 +12,14 @@ void help() {
 	printf("usage: kmer_counts_per_sequence input_file kmer [kmer-file] ...\n\n"
 				 "count mers in each sequence of size k from a fasta file\n"
 				 "\n"
-				 "  --input    -i  input fasta file to count\n"
-				 "  --kmer     -k  size of mers to count\n"
-				 "  --mer-file -m  a file containing a list of mers you are interested\n"
-				 "                 in opening. this will enable output your results in\n"
-				 "                 a sparse format \n"
-				 "  --sparse   -s  output values in a sparse format. output is in the\n"
-				 "                 order sequence_number, mer_index, value\n"
+				 "  --input      -i  input fasta file to count\n"
+				 "  --kmer       -k  size of mers to count\n"
+				 "  --compliment -c  count compliment of sequences\n"
+				 "  --mer-file   -m  a file containing a list of mers you are interested\n"
+				 "                   in opening. this will enable output your results in\n"
+				 "                   a sparse format \n"
+				 "  --sparse     -s  output values in a sparse format. output is in the\n"
+				 "                   order sequence_number, mer_index, value\n"
 				 "\n"
 				 "Report all bugs to mutantturkey@gmail.com\n"
 				 "\n"
@@ -55,10 +56,12 @@ int main(int argc, char **argv) {
 	bool sparse = false;
 	bool kmer_set = false;
 	bool specific_mers = false;
+	bool count_compliment = false;
 
 	static struct option long_options[] = {
 		{"input", required_argument, 0, 'i'},
 		{"kmer",  required_argument, 0, 'k'},
+		{"compliment", required_argument, 0, 'c'},
 		{"sparse", no_argument, 0, 's'},
 		{"mer-file", required_argument, 0, 'm'},
 		{"help", no_argument, 0, 'h'},
@@ -70,7 +73,7 @@ int main(int argc, char **argv) {
 		int option_index = 0;
 		int c = 0;
 
-		c = getopt_long (argc, argv, "i:k:m:vsh", long_options, &option_index);
+		c = getopt_long (argc, argv, "i:k:m:cvsh", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -83,6 +86,8 @@ int main(int argc, char **argv) {
 				kmer = atoi(optarg);
 				kmer_set = true;
 				break;
+			case 'c':
+				count_compliment = true;
 			case 's':
 				sparse = true;
 				break;
@@ -147,7 +152,6 @@ int main(int argc, char **argv) {
 
 	unsigned long long sequence = 0;
 	while ((read = getdelim(&line, &len, '>', fh)) != -1) {
-		long long i = 0;
 		size_t k = 0;
 
 		memset(counts, 0, width * sizeof(unsigned long long));
@@ -170,11 +174,17 @@ int main(int argc, char **argv) {
 			seq[k] = alpha[(int)seq[k]];
 		}
 
-		for(i = 0; i < (signed long long)(seq_length - kmer + 1); i++) {
-			size_t mer = num_to_index(&seq[i],kmer, width, &i);
-			counts[mer]++;
+		count_sequence(seq, seq_length, kmer, counts);
+
+		if(count_compliment) {
+			for(k = 0; k < seq_length; k++) { 
+				seq[k] = compliment[(int)seq[k]];
+			}
+			
+			reverse_string(seq, seq_length);
+			count_sequence(seq, seq_length, kmer, counts);
+			
 		}
-		
 
 		if(specific_mers) {
 				for(k = 0; k < num_desired_indicies; k++) {
